@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import core.Core
 import java.lang.reflect.Field
 
 @Suppress("unused")
@@ -80,30 +81,20 @@ open class RecyclerAdapter<M: Any>(@LayoutRes private val itemRes: Int, private 
 
     protected open fun getItem(position: Int): Any? = if (position in 0 until itemList.size) itemList[position] else null
 
-    protected open fun getValue(item: Any?, id: Int): Any? {
-        var value: Any? = null
-        if (item != null) {
-            if (id <= 0) value = item
+    protected open fun getValue(item: Any?, id: Int) = item?.let {
+        if (id <= 0) it
+        else {
+            var field: Field? = null
+            if (fields.indexOfKey(id) >= 0) field = fields[id]
             else {
-                var field: Field? = null
-                if (fields.indexOfKey(id) >= 0) field = fields[id]
-                else {
-                    var first = true
-                    try {
-                        field = item.javaClass.getDeclaredField(context.resources.getResourceEntryName(id).split("_").joinToString("") {
-                            if (first) {
-                                first = false
-                                it
-                            } else it.capitalize()
-                        })
-                        field.isAccessible = true
-                    } catch (e: NoSuchFieldException) {}
-                    fields.put(id, field)
-                }
-                value = field?.get(item)
+                try {
+                    field = it.javaClass.getDeclaredField(Core.underscoresToCamelCase(context.resources.getResourceEntryName(id)))
+                    field.isAccessible = true
+                } catch (e: NoSuchFieldException) {}
+                fields.put(id, field)
             }
+            field?.get(it)
         }
-        return value
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MapHolder {
@@ -125,10 +116,12 @@ open class RecyclerAdapter<M: Any>(@LayoutRes private val itemRes: Int, private 
     protected open fun onBindView(view: View, item: Any?) { onUpdateView(view, getValue(item, view.id)) }
 
     protected open fun onUpdateView(view: View, value: Any?) {
-        if (value is Boolean) view.visibility = if (value) View.VISIBLE else View.GONE
-        else when (view) {
-            is TextView  -> view.text = value as? CharSequence ?: value?.toString()
-            is ImageView -> if (value is Int) view.setImageResource(value) else view.setImageURI(if (value != null) Uri.parse(value.toString()) else null)
+        view.run {
+            if (value is Boolean) visibility = if (value) View.VISIBLE else View.GONE
+            else when (this) {
+                is TextView  -> text = value as? CharSequence ?: value?.toString()
+                is ImageView -> if (value is Int) setImageResource(value) else setImageURI(if (value != null) Uri.parse(value.toString()) else null)
+            }
         }
     }
 

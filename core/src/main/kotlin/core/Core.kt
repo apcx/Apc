@@ -16,8 +16,19 @@ object Core {
 
     @JvmStatic fun isEmpty(collection: Collection<Any?>?) = collection?.isEmpty() ?: true
 
-    @JvmStatic fun toJson(src: Any?, pretty: Boolean = false): String = (if (pretty) prettyGson else gson).toJson(src)
+    @JvmStatic fun toJson(src: Any?):                  String = toJson(src, false)
+    @JvmStatic fun toJson(src: Any?, pretty: Boolean): String = (if (pretty) prettyGson else gson).toJson(src)
 
     @JvmStatic fun         <T: Any> fromJson(json: String?, clazz: Class<T>) = gson.fromJson<T?>(json, clazz)
         inline fun <reified T: Any> fromJson(json: String?)                  = gson.fromJson<T?>(json, T::class.java)
+
+    @JvmStatic fun underscoresToCamelCase(underscores: String): String {
+        var first = true
+        return underscores.split("_").joinToString("") {
+            if (first) {
+                first = false
+                it
+            } else it.capitalize()
+        }
+    }
 }

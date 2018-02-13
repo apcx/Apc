@@ -11,6 +11,5 @@ android {
 dependencies {
     implementation project(':core')
     implementation "com.android.support:recyclerview-v7:$support_version"
-    implementation 'com.google.guava:guava:23.6-android' // https://github.com/google/guava
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
