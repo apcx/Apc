@@ -1,4 +1,4 @@
-package common
+package apc.android
 
 import android.content.Context
 import android.net.Uri
@@ -12,7 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import core.Core
+import apc.common.underscoresToCamelCase
 import java.lang.reflect.Field
 
 @Suppress("unused")
@@ -88,7 +88,7 @@ open class RecyclerAdapter<M: Any>(@LayoutRes private val itemRes: Int, private 
             if (fields.indexOfKey(id) >= 0) field = fields[id]
             else {
                 try {
-                    field = it.javaClass.getDeclaredField(Core.underscoresToCamelCase(context.resources.getResourceEntryName(id)))
+                    field = it.javaClass.getDeclaredField(underscoresToCamelCase(context.resources.getResourceEntryName(id)))
                     field.isAccessible = true
                 } catch (e: NoSuchFieldException) {}
                 fields.put(id, field)
