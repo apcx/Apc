@@ -22,7 +22,7 @@ inline fun <reified T> String?.toObject() = try {
 }
 
 inline fun <reified T> String?.toObjectList() = try {
-    gson.fromJson<List<T>?>(this, object : TypeToken<MutableList<T>>() {}.type)
+    gson.fromJson<List<T>?>(this, TypeToken.getParameterized(ArrayList::class.java, T::class.java).type)
 } catch (e: JsonSyntaxException) {
     if (verbose) e.printStackTrace()
     null
