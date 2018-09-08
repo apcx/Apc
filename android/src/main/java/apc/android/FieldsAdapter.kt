@@ -27,7 +27,7 @@ class FieldsAdapter(bean: Any) : ListAdapter<Pair<String, CharSequence>, MapHold
     }
 }
 
-class PairCallback<Key, Value> : DiffUtil.ItemCallback<Pair<Key, Value>>() {
-    override fun areItemsTheSame(oldItem: Pair<Key, Value>, newItem: Pair<Key, Value>) = oldItem.first == newItem.first
-    override fun areContentsTheSame(oldItem: Pair<Key, Value>, newItem: Pair<Key, Value>) = oldItem == newItem
+class PairCallback<K, V> : DiffUtil.ItemCallback<Pair<K, V>>() {
+    override fun areItemsTheSame(oldItem: Pair<K, V>, newItem: Pair<K, V>) = oldItem.first == newItem.first
+    override fun areContentsTheSame(oldItem: Pair<K, V>, newItem: Pair<K, V>) = oldItem == newItem
 }

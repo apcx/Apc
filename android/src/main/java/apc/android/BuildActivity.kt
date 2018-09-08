@@ -11,7 +11,10 @@ class BuildActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_build)
+
+        val clazz = Build::class.java
+        title = clazz.name
         recycler_view.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-        recycler_view.adapter = FieldsAdapter(Build::class.java)
+        recycler_view.adapter = FieldsAdapter(clazz)
     }
 }
