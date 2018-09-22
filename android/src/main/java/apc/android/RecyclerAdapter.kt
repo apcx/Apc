@@ -88,7 +88,7 @@ open class RecyclerAdapter<M: Any>(@LayoutRes private val itemRes: Int, private 
             if (fields.indexOfKey(id) >= 0) field = fields[id]
             else {
                 try {
-                    field = it.javaClass.getDeclaredField(underscoresToCamelCase(context.resources.getResourceEntryName(id)))
+                    field = it.javaClass.getDeclaredField(context.resources.getResourceEntryName(id).underscoresToCamelCase())
                     field.isAccessible = true
                 } catch (e: NoSuchFieldException) {}
                 fields.put(id, field)

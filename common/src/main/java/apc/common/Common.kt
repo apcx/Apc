@@ -28,9 +28,9 @@ inline fun <reified T> String?.toObjectList() = try {
     null
 }
 
-fun underscoresToCamelCase(underscores: String): String {
+fun String.underscoresToCamelCase(): String {
     var first = true
-    return underscores.split("_").joinToString("") {
+    return split("_").joinToString("") {
         if (first) {
             first = false
             it
