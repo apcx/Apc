@@ -1,0 +1,14 @@
+apply plugin: 'kotlin'
+
+dependencies {
+    implementation project(':java')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    // https://mvnrepository.com/artifact/net.lingala.zip4j/zip4j
+    implementation 'net.lingala.zip4j:zip4j:1.3.2'
+}
+
+jar {
+    manifest { attributes 'Main-Class': 'apc.jar.AndroidKt' }
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    baseName = 'Apc'
+}

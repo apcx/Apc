@@ -1,4 +1,4 @@
-@file:Suppress("unused")
+@file:Suppress("SpellCheckingInspection", "unused")
 
 package apc.common
 

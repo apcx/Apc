@@ -21,7 +21,7 @@ open class Adapter<T>(private val itemRes: Int = 0, callback: DiffUtil.ItemCallb
 open class PairAdapter<K, V>(itemRes: Int = 0) : Adapter<Pair<K, V>>(itemRes, PairCallback()) {
     @Suppress("unused")
     fun submitMap(map: Map<K, V>) {
-        submitList(map.map { Pair(it.key, it.value) })
+        submitList(map.map { it.key to it.value })
     }
 }
 
@@ -31,7 +31,7 @@ class FieldAdapter(bean: Any) : PairAdapter<CharSequence, CharSequence>(R.layout
             it.isAccessible = true
             var value = it[bean]
             if (value is Array<*>) value = Arrays.toString(value).run { substring(1, lastIndex) }
-            Pair(it.name, value as? CharSequence ?: value.toJson())
+            it.name to (value as? CharSequence ?: value.toJson())
         })
     }
 }
