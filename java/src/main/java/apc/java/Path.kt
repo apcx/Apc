@@ -1,16 +1,27 @@
+@file:Suppress("unused")
+
 package apc.java
 
+import java.io.FileNotFoundException
 import java.io.IOException
 import java.nio.file.*
 import java.nio.file.FileVisitResult.*
 import java.nio.file.attribute.BasicFileAttributes
 import java.nio.file.attribute.FileTime
+import java.util.*
 
 fun matcherList(vararg matcher: String) = matcher.map { FileSystems.getDefault().getPathMatcher("glob:$it") }
 
-@Suppress("unused")
 val Path.lastModifiedTime
     get() = Files.getAttribute(this, "lastModifiedTime") as FileTime
+
+val Path.properties
+    get() = Properties().apply {
+        try {
+            toFile().inputStream().use(::load)
+        } catch (e: FileNotFoundException) {
+        }
+    }
 
 operator fun Path.plus(other: Path) = resolve(other)!!
 operator fun Path.plus(other: String) = resolve(other)!!

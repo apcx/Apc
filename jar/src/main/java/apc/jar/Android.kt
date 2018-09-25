@@ -18,17 +18,15 @@ fun main(args: Array<String>) {
     }
 }
 
-private val rootIgnore = matcherList(".*", "build", "gradle", "gradlew", "gradlew.bat", "local.properties", "*.iml")
+private val rootIgnore = matcherList(".*", "build", "gradle*", "local.properties", "*.iml")
 
 fun svnIgnore(project: String = "") {
     val root = Paths.get(project)
     if (Files.isDirectory(root)) {
-        root("svn", "ps", "svn:global-ignores", "build\n*.iml", ".")
-        root("svn", "ps", "svn:ignore", """.gradle
-.idea
-gradle
-gradlew
-gradlew.bat
+        root("svn", "ps", "svn:global-ignores", """.*
+build
+*.iml""", ".")
+        root("svn", "ps", "svn:ignore", """gradle*
 local.properties""", ".")
     }
 }
@@ -69,8 +67,8 @@ fun copyProject(source: Path, target: Path) {
     target.toFile().deleteRecursively()
 
     source copyTo target
-    val moduleIgnore = matcherList(".*", "build", "*.iml")
     val vcs = matcherList(".git*", ".svn")
+    val moduleIgnore = matcherList(".*", "build", "*.iml")
     Files.list(source).parallel().filter { vcs.any(it::matchName) || rootIgnore.none(it::matchName) }.forEach {
         val targetModule = target + it.fileName
         it copyTo targetModule

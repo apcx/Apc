@@ -3,14 +3,17 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion compile_version
     defaultConfig {
-        applicationId 'apc.app'
         minSdkVersion 14
-        //noinspection OldTargetApi
+        //noinspection ExpiringTargetSdkVersion
         targetSdkVersion 22
     }
     dataBinding { enabled = true }
+    lintOptions {
+        check 'UnusedResources'
+        htmlReport false
+    }
 }
 
 dependencies { implementation project(':android') }
