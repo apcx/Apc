@@ -2,21 +2,21 @@ package apc.android
 
 import android.content.Context
 import android.net.Uri
-import android.support.annotation.IdRes
-import android.support.annotation.LayoutRes
-import android.support.annotation.UiThread
-import android.support.v7.widget.RecyclerView
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.IdRes
+import androidx.annotation.LayoutRes
+import androidx.annotation.UiThread
+import androidx.recyclerview.widget.RecyclerView
 import apc.common.underscoresToCamelCase
 import java.lang.reflect.Field
 
 @Suppress("unused")
-open class RecyclerAdapter<M: Any>(@LayoutRes private val itemRes: Int, private val singleSelect: Boolean) : RecyclerView.Adapter<MapHolder>() {
+open class RecyclerAdapter<M : Any>(@LayoutRes private val itemRes: Int, private val singleSelect: Boolean) : RecyclerView.Adapter<MapHolder>() {
 
     constructor(itemRes: Int) : this(itemRes, false) // for java
 
@@ -63,21 +63,28 @@ open class RecyclerAdapter<M: Any>(@LayoutRes private val itemRes: Int, private 
         this.recyclerView = recyclerView
     }
 
-    @UiThread fun attach(parent: ViewGroup) {
+    @UiThread
+    fun attach(parent: ViewGroup) {
         context = parent.context
         mainHolder = onCreateViewHolder(parent, 0)
         if (itemList.isEmpty()) item = null // build default one-null-element list
         parent.addView(mainHolder.itemView)
         registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-            override fun onChanged()                                            { onBindViewHolder(mainHolder, 0) }
-            override fun onItemRangeChanged(positionStart: Int, itemCount: Int) { if (0 in positionStart until positionStart + itemCount) onChanged() }
+            override fun onChanged() {
+                onBindViewHolder(mainHolder, 0)
+            }
+
+            override fun onItemRangeChanged(positionStart: Int, itemCount: Int) {
+                if (0 in positionStart until positionStart + itemCount) onChanged()
+            }
         })
         notifyDataSetChanged()
     }
 
     override fun getItemCount() = itemList.size
 
-    @LayoutRes protected open fun getLayout(viewType: Int) = itemRes
+    @LayoutRes
+    protected open fun getLayout(viewType: Int) = itemRes
 
     protected open fun getItem(position: Int): Any? = if (position in 0 until itemList.size) itemList[position] else null
 
@@ -90,7 +97,8 @@ open class RecyclerAdapter<M: Any>(@LayoutRes private val itemRes: Int, private 
                 try {
                     field = it.javaClass.getDeclaredField(context.resources.getResourceEntryName(id).underscoresToCamelCase())
                     field.isAccessible = true
-                } catch (e: NoSuchFieldException) {}
+                } catch (e: NoSuchFieldException) {
+                }
                 fields.put(id, field)
             }
             field?.get(it)
@@ -113,13 +121,15 @@ open class RecyclerAdapter<M: Any>(@LayoutRes private val itemRes: Int, private 
         holder.itemView.isSelected = position == selected
     }
 
-    protected open fun onBindView(view: View, item: Any?) { onUpdateView(view, getValue(item, view.id)) }
+    protected open fun onBindView(view: View, item: Any?) {
+        onUpdateView(view, getValue(item, view.id))
+    }
 
     protected open fun onUpdateView(view: View, value: Any?) {
         view.run {
             if (value is Boolean) visibility = if (value) View.VISIBLE else View.GONE
             else when (this) {
-                is TextView  -> text = value as? CharSequence ?: value?.toString()
+                is TextView -> text = value as? CharSequence ?: value?.toString()
                 is ImageView -> if (value is Int) setImageResource(value) else setImageURI(if (value != null) Uri.parse(value.toString()) else null)
             }
         }
@@ -134,13 +144,13 @@ class MapHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private var setup = false
 
     fun setup(view: View = itemView, listener: ((View) -> Unit)? = null) {
-        if (view.id > 0)       views.put(view.id, view)
-        if (view.isClickable)  view.setOnClickListener(listener)
+        if (view.id > 0) views.put(view.id, view)
+        if (view.isClickable) view.setOnClickListener(listener)
         if (view is ViewGroup) for (i in 0 until view.childCount) setup(view.getChildAt(i), listener) // recursive
         setup = true
     }
 
-    operator fun <V: View> get(@IdRes id: Int): V {
+    operator fun <V : View> get(@IdRes id: Int): V {
         var view = views[id]
         if (!setup && null == view) {
             view = itemView.findViewById(id)

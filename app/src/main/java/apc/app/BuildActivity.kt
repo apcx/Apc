@@ -1,9 +1,10 @@
-package apc.android
+package apc.app
 
 import android.os.Build
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
+import apc.android.FieldAdapter
 import kotlinx.android.synthetic.main.recycler_view.*
 
 class BuildActivity : AppCompatActivity() {
@@ -14,7 +15,7 @@ class BuildActivity : AppCompatActivity() {
 
         val clazz = Build::class.java
         title = clazz.name
-        recycler_view.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-        recycler_view.adapter = FieldAdapter(clazz)
+        recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        recyclerView.adapter = FieldAdapter(clazz)
     }
 }
