@@ -17,6 +17,6 @@ dependencies {
     api project(':common')
     api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     api 'org.jetbrains.anko:anko:0.10.7' // https://github.com/Kotlin/anko
-    api 'androidx.appcompat:appcompat:1.0.0'
+    api 'androidx.appcompat:appcompat:1.0.2'
     api 'androidx.recyclerview:recyclerview:1.0.0'
 }

@@ -3,10 +3,8 @@
 package apc.android
 
 import android.app.Activity
-import android.content.Context
 import android.content.ContextWrapper
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -15,8 +13,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import apc.common.toJson
 import org.jetbrains.anko.internals.AnkoInternals
-
-val Context.preferences get() = PreferenceManager.getDefaultSharedPreferences(this)!!
 
 @Suppress("IMPLICIT_CAST_TO_ANY")
 inline operator fun <reified T> SharedPreferences.get(key: String) = when (T::class) {

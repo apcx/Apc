@@ -1,13 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Hello World!" />
-</FrameLayout>
+    <data>
+
+        <import type="apc.app.PermissionKt" />
+
+        <variable
+            name="vm"
+            type="apc.app.MainVm" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="toBuild"
+            android:text="android.os.Build"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="requestOverlay"
+            android:text='@{vm.canDrawOverlays ? "canDrawOverlays" : "canNotDrawOverlays"}'
+            android:textAllCaps="false"
+            android:textColor="@{vm.canDrawOverlays ? @android:color/holo_green_dark : @android:color/darker_gray}" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> PermissionKt.testOverlay(context)}"
+            android:text="AlertWindow"
+            android:textAllCaps="false" />
+    </LinearLayout>
+</layout>
