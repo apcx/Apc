@@ -11,6 +11,16 @@ android {
         check 'UnusedResources'
         htmlReport false
     }
+    buildTypes {
+        debug {
+            minifyEnabled false
+            consumerProguardFiles 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled true
+            consumerProguardFiles 'proguard-rules.pro'
+        }
+    }
 }
 
 dependencies {
@@ -18,5 +28,8 @@ dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     api 'org.jetbrains.anko:anko:0.10.7' // https://github.com/Kotlin/anko
     api 'androidx.appcompat:appcompat:1.0.2'
+    api 'androidx.fragment:fragment-ktx:1.0.0'
     api 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
 }

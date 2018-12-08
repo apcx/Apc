@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
 
@@ -13,32 +14,43 @@
 
     </data>
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="toBuild"
-            android:text="android.os.Build"
-            android:textAllCaps="false" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="requestOverlay"
-            android:text='@{vm.canDrawOverlays ? "canDrawOverlays" : "canNotDrawOverlays"}'
-            android:textAllCaps="false"
-            android:textColor="@{vm.canDrawOverlays ? @android:color/holo_green_dark : @android:color/darker_gray}" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="toBuild"
+                android:text="android.os.Build"
+                android:textAllCaps="false" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="@{() -> PermissionKt.testOverlay(context)}"
-            android:text="AlertWindow"
-            android:textAllCaps="false" />
-    </LinearLayout>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="requestOverlay"
+                android:text='@{vm.canDrawOverlays ? "canDrawOverlays" : "canNotDrawOverlays"}'
+                android:textAllCaps="false"
+                android:textColor="@{vm.canDrawOverlays ? @android:color/holo_green_dark : @android:color/darker_gray}" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> PermissionKt.testOverlay(context)}"
+                android:text="AlertWindow"
+                android:textAllCaps="false" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </layout>
