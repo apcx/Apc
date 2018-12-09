@@ -49,10 +49,10 @@ abstract class BindFragment<Binding : ViewDataBinding, VM : ViewModel> : Fragmen
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val field = get(this::class.jvmName)!!.vm
-        if (field != null) {
-            vm = ViewModelProviders.of(this)[::vm.jClass]
-            field[binding] = vm
+        val clazz = ::vm.jClass
+        if (!Modifier.isAbstract(clazz.modifiers)) {
+            vm = ViewModelProviders.of(this)[clazz]
+            get(this::class.jvmName)!!.vm?.set(binding, vm)
         }
     }
 
@@ -72,6 +72,6 @@ class BindCache(bindingProperty: KProperty0<ViewDataBinding>, vmProperty: KPrope
         inflate = bindingClass.getMethod("inflate", LayoutInflater::class.java, ViewGroup::class.java, Boolean::class.javaPrimitiveType)
         val fields = bindingClass.declaredFields
         fields.find { it.type.isAssignableFrom(ownerClass) }?.let(::owner::set)
-        if (!Modifier.isAbstract(vmClass.modifiers)) fields.find { it.type.isAssignableFrom(vmClass) }?.let(::vm::set)
+        fields.find { it.type.isAssignableFrom(vmClass) }?.let(::vm::set)
     }
 }
