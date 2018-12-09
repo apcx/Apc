@@ -11,15 +11,17 @@ import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
+import java.lang.reflect.Field
 import java.lang.reflect.Method
+import java.lang.reflect.Modifier
 import kotlin.jvm.internal.CallableReference
-import kotlin.reflect.KProperty
+import kotlin.reflect.KProperty0
 import kotlin.reflect.jvm.internal.impl.descriptors.ValueDescriptor
 import kotlin.reflect.jvm.internal.impl.name.Name
 import kotlin.reflect.jvm.internal.impl.resolve.DescriptorUtils
 import kotlin.reflect.jvm.jvmName
 
-val <T> KProperty<T>.jClass
+val <T> KProperty0<T>.jClass
     get(): Class<T> {
         val receiver = (this as CallableReference).boundReceiver::class
         return cache.getOrPut("${receiver.jvmName}.$name") {
@@ -32,25 +34,44 @@ val <T> KProperty<T>.jClass
 private val getProperties by lazy { Any::class::class.java.getMethod("getProperties", Name::class.java) }
 private val cache by lazy { mutableMapOf<String, Class<*>>() }
 
-open class BaseFragment<Binding : ViewDataBinding, VM : ViewModel> : Fragment() {
+abstract class BindFragment<Binding : ViewDataBinding, VM : ViewModel> : Fragment() {
 
     protected lateinit var binding: Binding
     protected lateinit var vm: VM
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val clazz = ::binding.jClass
-        binding = getOrPut(clazz.name) {
-            clazz.getMethod("inflate", LayoutInflater::class.java, ViewGroup::class.java, Boolean::class.javaPrimitiveType)
-        }(null, inflater, container, false) as Binding
+        val cache = getOrPut(this::class.jvmName) { BindCache(::binding, ::vm) }
+        binding = cache.inflate(null, inflater, container, false) as Binding
         binding.setLifecycleOwner(this)
+        cache.owner?.set(binding, this)
         return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        vm = ViewModelProviders.of(this)[::vm.jClass]
-//        binding.setVariable(BR.vm, vm)
+        val field = get(this::class.jvmName)!!.vm
+        if (field != null) {
+            vm = ViewModelProviders.of(this)[::vm.jClass]
+            field[binding] = vm
+        }
     }
 
-    companion object : ArrayMap<String, Method>()
+    companion object : ArrayMap<String, BindCache>()
+}
+
+class BindCache(bindingProperty: KProperty0<ViewDataBinding>, vmProperty: KProperty0<ViewModel>) {
+
+    internal val inflate: Method
+    internal var owner: Field? = null
+    internal var vm: Field? = null
+
+    init {
+        val bindingClass = bindingProperty.jClass
+        val ownerClass = (bindingProperty as CallableReference).boundReceiver.javaClass
+        val vmClass = vmProperty.jClass
+        inflate = bindingClass.getMethod("inflate", LayoutInflater::class.java, ViewGroup::class.java, Boolean::class.javaPrimitiveType)
+        val fields = bindingClass.declaredFields
+        fields.find { it.type.isAssignableFrom(ownerClass) }?.let(::owner::set)
+        if (!Modifier.isAbstract(vmClass.modifiers)) fields.find { it.type.isAssignableFrom(vmClass) }?.let(::vm::set)
+    }
 }
