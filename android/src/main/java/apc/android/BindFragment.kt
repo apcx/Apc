@@ -7,11 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.collection.ArrayMap
+import androidx.databinding.Bindable
+import androidx.databinding.Observable
 import androidx.databinding.ViewDataBinding
+import androidx.databinding.library.baseAdapters.BR
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
-import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import kotlin.jvm.internal.CallableReference
@@ -30,20 +32,22 @@ val <T> KProperty0<T>.jClass
         } as Class<T>
     }
 
-// KClassImpl.getProperties()
-private val getProperties by lazy { Any::class::class.java.getMethod("getProperties", Name::class.java) }
-private val cache by lazy { mutableMapOf<String, Class<*>>() }
+private val getProperties = Any::class::class.java.getMethod("getProperties", Name::class.java)
+private val cache = mutableMapOf<String, Class<*>>()
 
-abstract class BindFragment<Binding : ViewDataBinding, VM : ViewModel> : Fragment() {
+// 跨项目范用 Fragment 基类
+abstract class BindFragment<Binding : ViewDataBinding, VM : ViewModel> : Fragment(), Bro {
 
     protected lateinit var binding: Binding
+
+    @get:Bindable
     protected lateinit var vm: VM
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val cache = getOrPut(this::class.jvmName) { BindCache(::binding, ::vm) }
-        binding = cache.inflate(null, inflater, container, false) as Binding
+        binding = getOrPut(this::class.jvmName) {
+            ::binding.jClass.getMethod("inflate", LayoutInflater::class.java, ViewGroup::class.java, Boolean::class.javaPrimitiveType)
+        }(null, inflater, container, false) as Binding
         binding.setLifecycleOwner(this)
-        cache.owner?.set(binding, this)
         return binding.root
     }
 
@@ -52,26 +56,14 @@ abstract class BindFragment<Binding : ViewDataBinding, VM : ViewModel> : Fragmen
         val clazz = ::vm.jClass
         if (!Modifier.isAbstract(clazz.modifiers)) {
             vm = ViewModelProviders.of(this)[clazz]
-            get(this::class.jvmName)!!.vm?.set(binding, vm)
+            binding.setVariable(BR.vm, vm)
         }
     }
 
-    companion object : ArrayMap<String, BindCache>()
+    companion object : ArrayMap<String, Method>()
 }
 
-class BindCache(bindingProperty: KProperty0<ViewDataBinding>, vmProperty: KProperty0<ViewModel>) {
-
-    internal val inflate: Method
-    internal var owner: Field? = null
-    internal var vm: Field? = null
-
-    init {
-        val bindingClass = bindingProperty.jClass
-        val ownerClass = (bindingProperty as CallableReference).boundReceiver.javaClass
-        val vmClass = vmProperty.jClass
-        inflate = bindingClass.getMethod("inflate", LayoutInflater::class.java, ViewGroup::class.java, Boolean::class.javaPrimitiveType)
-        val fields = bindingClass.declaredFields
-        fields.find { it.type.isAssignableFrom(ownerClass) }?.let(::owner::set)
-        fields.find { it.type.isAssignableFrom(vmClass) }?.let(::vm::set)
-    }
+interface Bro : Observable {
+    override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {}
+    override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {}
 }
