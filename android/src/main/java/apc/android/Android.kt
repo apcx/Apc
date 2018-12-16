@@ -2,13 +2,10 @@
 
 package apc.android
 
-import android.app.Activity
-import android.content.ContextWrapper
 import android.content.SharedPreferences
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import apc.common.toJson
@@ -26,16 +23,6 @@ inline operator fun <reified T> SharedPreferences.get(key: String) = when (T::cl
     Iterable::class -> getStringSet(key, mutableSetOf())
     else -> getBoolean(key, false)
 } as T
-
-val View.activity
-    get(): Activity? {
-        var context = context
-        while (context is ContextWrapper) {
-            if (context is Activity) return context
-            context = context.baseContext
-        }
-        return null
-    }
 
 var TextView.textDp: Float
     @Deprecated(AnkoInternals.NO_GETTER, level = DeprecationLevel.ERROR) get() = AnkoInternals.noGetter()
