@@ -35,12 +35,9 @@ val <T> KProperty0<T>.jClass
 private val getProperties = Any::class::class.java.getMethod("getProperties", Name::class.java)
 private val cache = mutableMapOf<String, Class<*>>()
 
-// 跨项目范用 Fragment 基类
-abstract class BindFragment<Binding : ViewDataBinding, VM : ViewModel> : Fragment(), Bro {
+abstract class BindFragment<Binding : ViewDataBinding, VM : ViewModel> : Fragment() {
 
     protected lateinit var binding: Binding
-
-    @get:Bindable
     protected lateinit var vm: VM
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -63,7 +60,12 @@ abstract class BindFragment<Binding : ViewDataBinding, VM : ViewModel> : Fragmen
     companion object : ArrayMap<String, Method>()
 }
 
-interface Bro : Observable {
-    override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {}
-    override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {}
+@Suppress("unused")
+private abstract class Br : Observable {
+
+    @Bindable
+    val vm = false
+
+    @Bindable
+    val item = false
 }
