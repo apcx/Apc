@@ -1,5 +1,6 @@
 package apc.android
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -27,12 +28,14 @@ open class PairAdapter<K, V>(itemRes: Int = 0) : Adapter<Pair<K, V>>(itemRes, Pa
 
 class FieldAdapter(bean: Any) : PairAdapter<CharSequence, CharSequence>(R.layout.item_field) {
     init {
-        submitList((bean as? Class<*> ?: bean.javaClass).declaredFields.map {
+        val map = (bean as? Class<*> ?: bean.javaClass).declaredFields.map {
             it.isAccessible = true
             var value = it[bean]
             if (value is Array<*>) value = Arrays.toString(value).run { substring(1, lastIndex) }
             it.name to (value as? CharSequence ?: value.toJson())
-        })
+        }
+        Log.i("FieldAdapter", map.joinToString("\n", " \n") { "${it.first} = ${it.second}" })
+        submitList(map)
     }
 }
 

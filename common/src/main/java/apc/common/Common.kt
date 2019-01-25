@@ -9,6 +9,8 @@ import com.google.gson.reflect.TypeToken
 
 var verbose = false
 
+val stackTrace get() = Throwable().stackTrace[1]!!
+
 val gson by lazy { Gson() }
 private val prettyGson by lazy { GsonBuilder().setPrettyPrinting().create() }
 

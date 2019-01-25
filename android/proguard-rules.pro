@@ -1,0 +1,1 @@
+-keep public class kotlin.reflect.jvm.internal.impl.** { public *; }

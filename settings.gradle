@@ -1,1 +1,1 @@
-include ':app', ':android', ':common', ':java', ':jar'
+include ':app', ':android', ':common', ':java', ':jar', ':android_ndk'

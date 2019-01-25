@@ -1,0 +1,13 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion compile_version
+    defaultConfig {
+        minSdkVersion 14
+        externalNativeBuild { cmake { abiFilters 'armeabi-v7a', 'x86' } }
+    }
+    externalNativeBuild { cmake { path 'CMakeLists.txt' } }
+}
+
+dependencies { implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version" }

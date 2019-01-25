@@ -3,8 +3,8 @@ package apc.android
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.transaction
 
 @Suppress("unused")
@@ -14,7 +14,7 @@ inline fun <reified T : Fragment> Context.startFragment(arguments: Bundle? = nul
     startActivity(intent)
 }
 
-class FragActivity : FragmentActivity() {
+class FragActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val fragment = Class.forName(intent.action!!).newInstance() as Fragment

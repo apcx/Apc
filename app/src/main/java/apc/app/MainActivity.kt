@@ -9,7 +9,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import apc.android.bind
+import apc.android.log
 import apc.app.databinding.ActivityMainBinding
+import apc.ndk.Cpu
 import org.jetbrains.anko.startActivity
 
 @Suppress("UNUSED_PARAMETER")
@@ -21,6 +23,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         vm = ViewModelProviders.of(this)[MainVm::class.java]
         bind<ActivityMainBinding>().vm = vm
+
+        log("$builds")
+        log("${Cpu.featureList()}")
     }
 
     fun toBuild(v: View) {
