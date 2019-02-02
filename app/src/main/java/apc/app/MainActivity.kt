@@ -26,6 +26,8 @@ class MainActivity : AppCompatActivity() {
 
         log("$builds")
         log("${Cpu.featureList()}")
+        Server.start()
+//        Client.start()
     }
 
     fun toBuild(v: View) {

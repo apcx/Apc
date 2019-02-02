@@ -16,6 +16,7 @@ fun main(args: Array<String>) {
             "zip" -> zipProject(project, args.size >= 3)
         }
     }
+    Speed.calc(1000)
 }
 
 private val rootIgnore = matcherList(".*", "build", "gradle*", "local.properties", "*.iml")
