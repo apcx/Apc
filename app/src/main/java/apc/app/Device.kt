@@ -19,7 +19,7 @@ val emulator = (Build.FINGERPRINT.startsWith("generic")
 val builds
     get(): Map<String, Any> {
         val map = mutableMapOf<String, Any>()
-        val properties = mutableListOf<KProperty0<*>>(
+        @Suppress("DEPRECATION") val properties = mutableListOf<KProperty0<*>>(
                 Build.VERSION::SDK_INT,
                 Build::MANUFACTURER,
                 Build::BRAND,
@@ -34,7 +34,7 @@ val builds
         }
         properties.forEach {
             val value = it.get()
-            if (value != null) map[it.name] = value
+            if (value != null) map[it.name] = if (value is Array<*>) value.joinToString() else value
         }
         map["cpuFeatures"] = Cpu.features
         return map
