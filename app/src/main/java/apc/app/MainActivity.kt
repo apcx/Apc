@@ -7,7 +7,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import apc.android.bind
 import apc.android.log
 import apc.app.databinding.ActivityMainBinding
@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        vm = ViewModelProviders.of(this)[MainVm::class.java]
+        vm = ViewModelProvider(this)[MainVm::class.java]
         bind<ActivityMainBinding>().vm = vm
 
         log("$builds")

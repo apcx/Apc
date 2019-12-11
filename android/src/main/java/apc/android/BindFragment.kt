@@ -1,4 +1,4 @@
-@file:Suppress("UNCHECKED_CAST")
+@file:Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate", "unused")
 
 package apc.android
 
@@ -6,14 +6,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.collection.ArrayMap
 import androidx.databinding.Bindable
 import androidx.databinding.Observable
 import androidx.databinding.ViewDataBinding
 import androidx.databinding.library.baseAdapters.BR
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import kotlin.jvm.internal.CallableReference
@@ -36,7 +35,6 @@ private val getProperties = Any::class::class.java.getMethod("getProperties", Na
 private val cache = mutableMapOf<String, Class<*>>()
 
 abstract class BindFragment<Binding : ViewDataBinding, VM : ViewModel> : Fragment() {
-
     protected lateinit var binding: Binding
     protected lateinit var vm: VM
 
@@ -44,7 +42,7 @@ abstract class BindFragment<Binding : ViewDataBinding, VM : ViewModel> : Fragmen
         binding = getOrPut(this::class.jvmName) {
             ::binding.jClass.getMethod("inflate", LayoutInflater::class.java, ViewGroup::class.java, Boolean::class.javaPrimitiveType)
         }(null, inflater, container, false) as Binding
-        binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
         return binding.root
     }
 
@@ -52,12 +50,12 @@ abstract class BindFragment<Binding : ViewDataBinding, VM : ViewModel> : Fragmen
         super.onActivityCreated(savedInstanceState)
         val clazz = ::vm.jClass
         if (!Modifier.isAbstract(clazz.modifiers)) {
-            vm = ViewModelProviders.of(this)[clazz]
+            vm = ViewModelProvider(this)[clazz]
             binding.setVariable(BR.vm, vm)
         }
     }
 
-    companion object : ArrayMap<String, Method>()
+    companion object : HashMap<String, Method>()
 }
 
 @Suppress("unused")
